@@ -1,0 +1,25 @@
+class Purchase {
+    private String month;
+    private Buyer buyer;
+    private double totalCost;
+    private String paymentMethod;
+
+    Purchase(String month, Buyer buyer, double totalCost, String paymentMethod) {
+        this.month = month;
+        this.buyer = buyer;
+        this.totalCost = totalCost;
+        this.paymentMethod = paymentMethod;
+    }
+
+    String getMonth() {
+        return month;
+    }
+
+    double getTotalCost() {
+        return totalCost;
+    }
+
+    String getPaymentMethod() {
+        return paymentMethod;
+    }
+}
