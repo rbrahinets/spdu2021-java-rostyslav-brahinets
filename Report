@@ -1,0 +1,78 @@
+import java.util.*;
+
+class Report {
+    private List<Buyer> buyers;
+
+    Report(List<Buyer> buyers) {
+        this.buyers = buyers;
+    }
+
+    void sentReport() {
+        Map<String, List<String>> monthsOfBuyer = new HashMap<>();
+        Set<Buyer> activeBuyers = new HashSet<>();
+        Set<Buyer> inactiveBuyers = new HashSet<>();
+
+        for (Buyer buyer : buyers) {
+            if (buyer.isActive()) {
+                activeBuyers.add(buyer);
+            } else {
+                inactiveBuyers.add(buyer);
+            }
+
+            monthsOfBuyer.put(buyer.getName(), new ArrayList<>());
+
+            for (Purchase purchase : buyer.getPurchases()) {
+                monthsOfBuyer.get(buyer.getName()).add(purchase.getMonth());
+            }
+        }
+
+        System.out.println("Active buyers:");
+        formReport(activeBuyers, monthsOfBuyer);
+
+        System.out.println();
+
+        System.out.println("Inactive buyers:");
+        formReport(inactiveBuyers, monthsOfBuyer);
+    }
+
+    private void formReport(Set<Buyer> buyers, Map<String, List<String>> listMonthsOfBuyer) {
+        Set<String> monthsOfBuyer = new HashSet<>();
+
+        for (Buyer buyer : buyers) {
+            monthsOfBuyer.addAll(listMonthsOfBuyer.get(buyer.getName()));
+        }
+
+        for (String monthOfBuyer : monthsOfBuyer) {
+            System.out.println(monthOfBuyer);
+
+            for (Buyer buyer : buyers) {
+                for (Purchase purchase : buyer.getPurchases()) {
+                    if (purchase.getMonth().equals(monthOfBuyer)) {
+                        StringBuffer report = new StringBuffer();
+
+                        report.append("\t").append(buyer.getName()).append(" ").append(buyer.getSurname()).append(" (")
+                                .append(buyer.getNumberOfPhone()).append(") : $")
+                                .append(buyer.getTotalCostPerMonth().get(monthOfBuyer));
+
+                        Set<String> keys = buyer.getPaymentMethodsPerMonth().get(purchase.getMonth()).keySet();
+                        String key = keys.toString().substring(1, keys.toString().length() - 1);
+
+                        Double cash = buyer.getPaymentMethodsPerMonth().get(purchase.getMonth()).get("cash");
+                        Double card = buyer.getPaymentMethodsPerMonth().get(purchase.getMonth()).get("card");
+
+                        if (buyer.getPaymentMethodsPerMonth().get(purchase.getMonth()).size() == 2) {
+                            report.append(" (cash: $").append(cash).append(", card: $").append(card).append(")");
+                        } else if (key.equals("cash")) {
+                            report.append(" (cash: $").append(cash).append(")");
+                        } else if (key.equals("card")) {
+                            report.append(" (card: $").append(card).append(")");
+                        }
+
+                        System.out.println(report);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+}
