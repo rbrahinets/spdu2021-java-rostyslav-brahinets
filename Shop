@@ -1,0 +1,56 @@
+import java.util.*;
+
+public class Shop {
+    public static void main(String[] args) {
+        List<Buyer> buyers = new ArrayList<>();
+        initial(buyers);
+
+        Report report = new Report(buyers);
+        report.sentReport();
+    }
+
+    private static void initial(List<Buyer> buyers) {
+        buyers.add(new Buyer("Rostyslav", "Brahinets",
+                new GregorianCalendar(2002, Calendar.JANUARY, 13),
+                "096 180 13 87", true));
+        buyers.add(new Buyer("Zhekoniy", "Blissful",
+                new GregorianCalendar(2001, Calendar.NOVEMBER, 19),
+                "064 738 99 00", false));
+        buyers.add(new Buyer("Irynka", "Shapoval",
+                new GregorianCalendar(2006, Calendar.MARCH, 24),
+                "090 387 46 38", true));
+        buyers.add(new Buyer("Dima", "Pylypenko",
+                new GregorianCalendar(2007, Calendar.JUNE, 28),
+                "098 780 13 87", false));
+
+        String[] months = {"June", "Jule", "August"};
+        String[] paymentMethods = {"cash", "card"};
+
+        buyers.get(0).getPurchases().add(new Purchase(months[2], buyers.get(0), 500.0, paymentMethods[1]));
+        buyers.get(1).getPurchases().add(new Purchase(months[1], buyers.get(1), 300.84, paymentMethods[0]));
+        buyers.get(2).getPurchases().add(new Purchase(months[2], buyers.get(2), 56.98, paymentMethods[1]));
+        buyers.get(1).getPurchases().add(new Purchase(months[0], buyers.get(1), 48.23, paymentMethods[1]));
+        buyers.get(0).getPurchases().add(new Purchase(months[0], buyers.get(0), 19.65, paymentMethods[0]));
+        buyers.get(2).getPurchases().add(new Purchase(months[2], buyers.get(2), 1000.76, paymentMethods[1]));
+        buyers.get(3).getPurchases().add(new Purchase(months[1], buyers.get(3), 490.46, paymentMethods[0]));
+        buyers.get(0).getPurchases().add(new Purchase(months[2], buyers.get(0), 982.52, paymentMethods[0]));
+
+        for (Buyer buyer : buyers) {
+            for (String month : months) {
+                buyer.getTotalCostPerMonth().put(month, 0.0);
+                buyer.getPaymentMethodsPerMonth().put(month, new HashMap<>());
+            }
+            for (Purchase purchase : buyer.getPurchases()) {
+                buyer.getPaymentMethodsPerMonth().get(purchase.getMonth()).put(purchase.getPaymentMethod(), 0.0);
+                buyer.getTotalCostPerMonth().replace(purchase.getMonth(),
+                        buyer.getTotalCostPerMonth().get(purchase.getMonth()) + purchase.getTotalCost());
+            }
+
+            for (Purchase purchase : buyer.getPurchases()) {
+                buyer.getPaymentMethodsPerMonth().get(purchase.getMonth()).put(purchase.getPaymentMethod(),
+                        buyer.getPaymentMethodsPerMonth().get(purchase.getMonth()).get(purchase.getPaymentMethod())
+                                + purchase.getTotalCost());
+            }
+        }
+    }
+}
